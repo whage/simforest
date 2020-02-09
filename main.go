@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+const (
+	width = 50
+	height = 25
+	foxCount = 8
+	gameLoopInterval = 200
+)
+
 type Position struct {
 	X, Y int
 }
@@ -31,7 +38,7 @@ func (f *Fox) Move() {
 	}
 }
 
-var environment [50][25]string
+var environment [width][height]string
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
@@ -39,7 +46,7 @@ func main() {
 	
 	for {
 		drawWorld(foxes)
-		time.Sleep(200 * time.Millisecond)
+		time.Sleep(gameLoopInterval * time.Millisecond)
 		step(foxes)
 	}
 }
@@ -53,16 +60,15 @@ func step(foxes []Fox) {
 func initPopulation() []Fox {
 	foxes := make([]Fox, 0)
 
-	foxCount := 8
 	for i := 0; i < foxCount; i++ {
-		foxes = append(foxes, Fox{Position{rand.Intn(50), rand.Intn(25)}})
+		foxes = append(foxes, Fox{Position{rand.Intn(width), rand.Intn(height)}})
 	}
 
 	return foxes
 }
 
 func drawWorld(foxes []Fox) {
-	fmt.Println(strings.Repeat("#", 50+2))
+	fmt.Println(strings.Repeat("#", width+2))
 	for y := 0; y < 25; y++ {
 		fmt.Print("#")
 		for x := 0; x < 50; x++ {
@@ -74,7 +80,7 @@ func drawWorld(foxes []Fox) {
 		}
 		fmt.Println("#")
 	}
-	fmt.Println(strings.Repeat("#", 50+2))
+	fmt.Println(strings.Repeat("#", width+2))
 }
 
 func isFox(x, y int, foxes []Fox) bool {
