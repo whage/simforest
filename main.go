@@ -63,17 +63,21 @@ type Mover interface {
 	Move()
 }
 
-type Mater interface {
-	TryToMate(others []Mover) *Mover
+type Breeder interface {
+	TryToMate(others []Breeder) Breeder
 }
 
 type Ager interface {
 	IncreaseAge()
 }
 
-type Population []Mover
+type Creature interface {
+	Mover
+	Breeder
+	Ager
+}
 
-type Predicate func(Mover) bool
+type Population []Creature
 
 func (p Population) FilterBunnies() []Bunny {
 	var results []Bunny
@@ -87,6 +91,7 @@ func (p Population) FilterBunnies() []Bunny {
 }
 
 type Fox struct {
+	gender Gender
 	pos Position
 	age int
 }
@@ -109,18 +114,20 @@ func (b *Bunny) IncreaseAge() {
 	b.age += 1
 }
 
-func (b *Bunny) IsNearby(o Bunny) bool {
+func (b *Bunny) IsNearby(o *Bunny) bool {
 	xWithin1 := math.Abs(float64(o.pos.X-b.pos.X)) <= 1
 	yWithin1 := math.Abs(float64(o.pos.Y-b.pos.Y)) <= 1
 	return xWithin1 && yWithin1
 }
 
-// TODO: can parameter be a *Bunny? a Bunny? a *Mater? a Mater?
-func (b *Bunny) TryToMate(others []Bunny) *Bunny {
+func (b *Bunny) TryToMate(others []Breeder) Breeder {
 	if (b.gender == Male) {
 		for _, o := range others {
-			if b.IsNearby(o) && (o.gender == Female) && b.age > 30 && o.age > 30 {
-				return createBunny(Position{b.pos.X, b.pos.Y})
+			o, ok := o.(*Bunny)
+			if ok {
+				if b.IsNearby(o) && (o.gender == Female) && b.age > 30 && o.age > 30 {
+					return createBunny(Position{b.pos.X, b.pos.Y})
+				}
 			}
 		}
 	}
@@ -137,6 +144,26 @@ func (f *Fox) Move() {
 
 func (f *Fox) IncreaseAge() {
 	f.age += 1
+}
+
+func (f *Fox) IsNearby(o *Fox) bool {
+	xWithin1 := math.Abs(float64(o.pos.X-f.pos.X)) <= 1
+	yWithin1 := math.Abs(float64(o.pos.Y-f.pos.Y)) <= 1
+	return xWithin1 && yWithin1
+}
+
+func (f *Fox) TryToMate(others []Breeder) Breeder {
+	if (f.gender == Male) {
+		for _, o := range others {
+			o, ok := o.(*Fox)
+			if ok {
+				if f.IsNearby(o) && (o.gender == Female) && f.age > 30 && o.age > 30 {
+					return createBunny(Position{f.pos.X, f.pos.Y})
+				}
+			}
+		}
+	}
+	return nil
 }
 
 func randomStep(p *Position) {
@@ -180,19 +207,27 @@ func step(population Population) Population {
 
 	for i, _ := range population {
 		population[i].Move()
-		//population[i].IncreaseAge()
+		population[i].IncreaseAge()
 
 		switch current := population[i].(type) {
-		case *Fox:
+		//case *Fox:
 			// TODO: continue (as with *Bunny below)
 		case *Bunny:
 			bunnies := population.FilterBunnies()
-			if newBunny := current.TryToMate(bunnies); newBunny != nil {
-				newPopulation = append(newPopulation, newBunny)
+
+			// Convert Bunnies to Breeders to satisfy TryToMate() signature
+			breeders := make([]Breeder, len(bunnies), len(bunnies))
+			for i := range bunnies {
+				breeders[i] = &bunnies[i]
+			}
+			if newBreeder := current.TryToMate(breeders); newBreeder != nil {
+				// Can this type assertion fail at runtime?
+				// If not, how does the type checker know?
+				newPopulation = append(newPopulation, newBreeder.(*Bunny))
 			}
 		}
 
-		// carry current object over to population of next round
+		// Carry current object over to population of next round
 		newPopulation = append(newPopulation, population[i])
 	}
 
@@ -207,11 +242,11 @@ func createBunny(p Position) *Bunny {
 	}
 }
 
-func initPopulation() []Mover {
-	population := make([]Mover, 0)
+func initPopulation() Population {
+	population := make(Population, 0)
 
 	for i := 0; i < foxCount; i++ {
-		population = append(population, &Fox{Position{rand.Intn(width), rand.Intn(height)}, 0})
+		population = append(population, &Fox{Gender(rand.Intn(2)), Position{rand.Intn(width), rand.Intn(height)}, 0})
 	}
 
 	for i := 0; i < bunnyCount; i++ {
