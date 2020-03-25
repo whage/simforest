@@ -116,9 +116,9 @@ func (b *Bunny) IncreaseAge() {
 	b.age += 1
 }
 
-func (b *Bunny) IsNearby(o *Bunny) bool {
-	xWithin1 := math.Abs(float64(o.pos.X-b.pos.X)) <= 1
-	yWithin1 := math.Abs(float64(o.pos.Y-b.pos.Y)) <= 1
+func (p Position) IsNearby(o Position) bool {
+	xWithin1 := math.Abs(float64(o.X-p.X)) <= 1
+	yWithin1 := math.Abs(float64(o.Y-p.Y)) <= 1
 	return xWithin1 && yWithin1
 }
 
@@ -127,7 +127,7 @@ func (b *Bunny) TryToMate(others []Breeder) Breeder {
 		for _, o := range others {
 			o, ok := o.(*Bunny)
 			if ok {
-				if b.IsNearby(o) && (o.gender == Female) && b.age > 30 && o.age > 30 {
+				if b.Pos().IsNearby(o.Pos()) && (o.gender == Female) && b.age > 30 && o.age > 30 {
 					return createBunny(Position{b.pos.X, b.pos.Y})
 				}
 			}
@@ -148,18 +148,12 @@ func (f *Fox) IncreaseAge() {
 	f.age += 1
 }
 
-func (f *Fox) IsNearby(o *Fox) bool {
-	xWithin1 := math.Abs(float64(o.pos.X-f.pos.X)) <= 1
-	yWithin1 := math.Abs(float64(o.pos.Y-f.pos.Y)) <= 1
-	return xWithin1 && yWithin1
-}
-
 func (f *Fox) TryToMate(others []Breeder) Breeder {
 	if (f.gender == Male) {
 		for _, o := range others {
 			o, ok := o.(*Fox)
 			if ok {
-				if f.IsNearby(o) && (o.gender == Female) && f.age > 30 && o.age > 30 {
+				if f.Pos().IsNearby(o.Pos()) && (o.gender == Female) && f.age > 30 && o.age > 30 {
 					return createBunny(Position{f.pos.X, f.pos.Y})
 				}
 			}
