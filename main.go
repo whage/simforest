@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	//"os"
-	//"strconv"
+	"os"
+	"os/exec"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -19,12 +20,13 @@ const (
 )
 
 const (
-	width = 50
-	height = 25
-	foxCount = 2
-	bunnyCount = 8
-	gameLoopInterval = 100
+	foxCount = 20
+	bunnyCount = 80
+	gameLoopInterval = 200
 )
+
+var width = 50
+var height = 25
 
 type Position struct {
 	X, Y int
@@ -187,18 +189,33 @@ func randomStep(p *Position) {
 	}
 }
 
-var environment [width][height]string
+func initBoardSize() {
+	sttyCommand := exec.Command("stty", "size")
+	sttyCommand.Stdin = os.Stdin
+	out, err := sttyCommand.Output()
+	if err != nil {
+		fmt.Println("Error when running `stty size`: ", err)
+		os.Exit(1)
+	}
+	terminalSize := strings.Split(strings.Trim(string(out), "\n"), " ")
+	h, _ := strconv.Atoi(terminalSize[0])
+	w, _ := strconv.Atoi(terminalSize[1])
+
+	width, height = w-2, h-2
+}
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
+
+	initBoardSize()
 	population := initPopulation()
 	
 	for {
 		drawWorld(population)
 		time.Sleep(gameLoopInterval * time.Millisecond)
 		population = step(population)
-		fmt.Println("Population count: ", len(population))
-		//fmt.Println("Age of first: ", population[0].age)
+		// https://stackoverflow.com/a/33509850/1772429
+		fmt.Printf("\033[0;0H")
 	}
 }
 
@@ -258,14 +275,14 @@ func initPopulation() Population {
 
 func drawWorld(population Population) {
 	fmt.Println(strings.Repeat("#", width+2))
-	for y := 0; y < 25; y++ {
+	for y := 0; y < height; y++ {
 		fmt.Print("#")
-		for x := 0; x < 50; x++ {
+		for x := 0; x < width; x++ {
 			fmt.Print(getMarker(x, y, population))
 		}
 		fmt.Println("#")
 	}
-	fmt.Println(strings.Repeat("#", width+2))
+	fmt.Print(strings.Repeat("#", width+2))
 }
 
 func getMarker(x, y int, population Population) string {
