@@ -244,11 +244,19 @@ func createBunny(p Position) *Bunny {
 	}
 }
 
+func createFox(p Position) *Fox {
+    return &Fox{
+        Gender(rand.Intn(2)),
+        p,
+        0,
+    }
+}
+
 func initPopulation() Population {
 	population := make(Population, 0)
 
 	for i := 0; i < foxCount; i++ {
-		population = append(population, &Fox{Gender(rand.Intn(2)), Position{rand.Intn(width), rand.Intn(height)}, 0})
+		population = append(population, createFox(Position{rand.Intn(width), rand.Intn(height)}))
 	}
 
 	for i := 0; i < bunnyCount; i++ {
