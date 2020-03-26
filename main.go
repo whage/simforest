@@ -163,22 +163,13 @@ func (f *Fox) TryToMate(others []Breeder) Breeder {
 }
 
 func randomStep(p *Position) {
-	directions := []Position{
-		{0, 0},
-		{0, 1},
-		{0, -1},
-		{1, 0},
-		{1, 1},
-		{1, -1},
-		{-1, 0},
-		{-1, 1},
-		{-1, -1},
-	}
+    steps := []int{-1, 0, 1}
+	direction := Position{
+        steps[rand.Intn(len(steps))],
+        steps[rand.Intn(len(steps))],
+    }
 
-	direction := directions[rand.Intn(len(directions))]
-	newPosition := p.Add(direction)
-
-	if newPosition.IsWithinEnvironment() {
+	if newPosition := p.Add(direction); newPosition.IsWithinEnvironment() {
 		*p = p.Add(direction)
 	}
 }
