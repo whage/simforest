@@ -1,8 +1,10 @@
 # Simforest: an ecological simulation
 
 ## TODO
+- use some builtin vector type instead of custom `Position`
 - learn how to do "inheritance" in go
     - how to share code between related objects (as in parent class's method in classical OOP)
+- use `float64` for Positions
 - evolution of species
 	- inheriting favorable abilities
 - add diverse set of terrain types and creatures
