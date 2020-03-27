@@ -1,6 +1,7 @@
 # Simforest: an ecological simulation
 
 ## TODO
+- pure random movement is stupid. Do something much more realistic
 - use some builtin vector type instead of custom `Position`
 - learn how to do "inheritance" in go
     - how to share code between related objects (as in parent class's method in classical OOP)
