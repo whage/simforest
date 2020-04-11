@@ -5,6 +5,9 @@
 - use some builtin vector type instead of custom `Position`
 - learn how to do "inheritance" in go
     - how to share code between related objects (as in parent class's method in classical OOP)
+    - https://stackoverflow.com/questions/21251242/is-it-possible-to-call-overridden-method-from-parent-struct-in-golang
+    https://stackoverflow.com/questions/37635769/elegant-way-to-implement-template-method-pattern-in-golang
+    - https://github.com/bvwells/go-patterns
 - use `float64` for Positions
 - evolution of species
 	- inheriting favorable abilities

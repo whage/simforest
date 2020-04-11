@@ -33,8 +33,8 @@ type Mover interface {
 	Move()
 }
 
-type Breeder interface {
-	TryToMate(others []Breeder) Breeder
+type Mater interface {
+	TryToMate(other Animal) Creature
 }
 
 type Ager interface {
@@ -43,23 +43,8 @@ type Ager interface {
 
 type Creature interface {
 	Mover
-	Breeder
+	Mater
 	Ager
-}
-
-type Animal struct {
-	environment *Environment
-	gender Gender
-	pos Position
-	age int
-}
-
-func (a Animal) Gender() Gender {
-	return a.gender
-}
-
-func (a Animal) Age() int {
-	return a.age
 }
 
 type Gender int
@@ -90,9 +75,20 @@ func CreateFox(p Position, e *Environment) *Fox {
 		},
 	}
 }
-
-func InitPopulation(e *Environment) Population {
-	population := make(Population, 0)
+/*
+func (p []Creature) FilterBunnies() []Bunny {
+	var results []Bunny
+	for i, _ := range p {
+		v, ok := p[i].(*Bunny)
+		if ok {
+			results = append(results, *v)
+		}
+	}
+	return results
+}
+*/
+func InitPopulation(e *Environment) []Creature {
+	population := make([]Creature, 0)
 
 	for i := 0; i < foxCount; i++ {
 		population = append(population, CreateFox(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
@@ -105,46 +101,19 @@ func InitPopulation(e *Environment) Population {
 	return population
 }
 
-func Step(population Population) Population {
-	var newPopulation Population
+func Step(population []Creature) []Creature {
+	var newPopulation []Creature
 
 	for i, _ := range population {
+		// pass rest of the population to Move() method
+		//population[i].Move(append(population[:i], population[i+1:]...))
 		population[i].Move()
+		//population[i].TryToMate()
 		population[i].IncreaseAge()
-
-		switch current := population[i].(type) {
-		//case *Fox:
-			// TODO: continue (as with *Bunny below)
-		case *Bunny:
-			bunnies := population.FilterBunnies()
-
-			// Convert Bunnies to Breeders to satisfy TryToMate() signature
-			breeders := make([]Breeder, len(bunnies), len(bunnies))
-			for i := range bunnies {
-				breeders[i] = &bunnies[i]
-			}
-			if newBreeder := current.TryToMate(breeders); newBreeder != nil {
-				// Can this type assertion fail at runtime?
-				// If not, how does the type checker know?
-				newPopulation = append(newPopulation, newBreeder.(*Bunny))
-			}
-		}
 
 		// Carry current object over to population of next round
 		newPopulation = append(newPopulation, population[i])
 	}
 
 	return newPopulation
-}
-
-func randomStep(p *Position, e *Environment) {
-	steps := []int{-1, 0, 1}
-	direction := Position{
-		steps[rand.Intn(len(steps))],
-		steps[rand.Intn(len(steps))],
-	}
-
-	if newPosition := p.Add(direction); newPosition.IsWithinEnvironment(e) {
-		*p = p.Add(direction)
-	}
 }

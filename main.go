@@ -54,7 +54,7 @@ func NewEnvironment() *simforest.Environment {
 	return simforest.CreateEnvironment(w, h)
 }
 
-func drawWorld(population simforest.Population, e *simforest.Environment) {
+func drawWorld(population []simforest.Creature, e *simforest.Environment) {
 	for y := 0; y < e.Height(); y++ {
 		for x := 0; x < e.Width(); x++ {
 			fmt.Print(getMarker(x, y, population))
@@ -62,7 +62,7 @@ func drawWorld(population simforest.Population, e *simforest.Environment) {
 	}
 }
 
-func getMarker(x, y int, population simforest.Population) string {
+func getMarker(x, y int, population []simforest.Creature) string {
 	for _, c := range population {
 		if c.Pos().X == x && c.Pos().Y == y {
 			switch c.(type) {
