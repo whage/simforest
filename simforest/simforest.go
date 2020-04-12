@@ -6,12 +6,22 @@ import (
 )
 
 const (
-	foxCount = 20
-	bunnyCount = 80
+	InfoColor    = "\033[1;34m%s\033[0m"
+	NoticeColor  = "\033[1;36m%s\033[0m"
+	WarningColor = "\033[1;33m%s\033[0m"
+	ErrorColor   = "\033[1;31m%s\033[0m"
+	DebugColor   = "\033[0;36m%s\033[0m"
+)
+
+const (
+	foxCount = 15
+	bunnyCount = 25
 )
 
 type Environment struct {
-	width, height int
+	width int
+	height int
+	tickCount int
 }
 
 func (e Environment) Height() int {
@@ -26,17 +36,20 @@ func CreateEnvironment(width, height int) *Environment {
 	return &Environment{
 		width,
 		height,
+		0,
 	}
 }
 
 type Creature interface {
 	Pos() Position
 	Env() *Environment
-	Move()
+	Move([]Creature)
 	Age() int
 	IncreaseAge()
 	Gender() Gender
 	Mate(Creature) Creature
+	CanStartMating() bool
+	Render() string
 }
 
 type Gender int
@@ -70,20 +83,24 @@ func TryToMate(c Creature, others []Creature) Creature {
 	return nil
 }
 
-func Step(population []Creature) []Creature {
+func Tick(population []Creature, env *Environment) []Creature {
 	var newPopulation []Creature
 
 	for i, _ := range population {
-		population[i].Move()
+		population[i].Move(population)
 		// add potential newborn to population
-		newBorn := TryToMate(population[i], population)
-		if newBorn != nil {
-			newPopulation = append(newPopulation, newBorn)
+		if population[i].CanStartMating() {
+			offSpring := TryToMate(population[i], population)
+			if offSpring != nil {
+				newPopulation = append(newPopulation, offSpring)
+			}
 		}
 		population[i].IncreaseAge()
 		// Carry current object over to population of next round
 		newPopulation = append(newPopulation, population[i])
 	}
-	//fmt.Println(len(newPopulation))
+
+	env.tickCount += 1
+
 	return newPopulation
 }

@@ -29,6 +29,15 @@ func (p *Position) IsWithinEnvironment(e *Environment) bool {
 	return p.X >= 0 && p.X < e.width && p.Y >= 0 && p.Y < e.height
 }
 
+func (p *Position) IsTaken(population []Creature) bool {
+	for _, c := range population {
+		if c.Pos() == *p {
+			return true
+		}
+	}
+	return false
+}
+
 func (p Position) IsNearby(o Position) bool {
 	xWithin1 := math.Abs(float64(o.X-p.X)) <= 1
 	yWithin1 := math.Abs(float64(o.Y-p.Y)) <= 1

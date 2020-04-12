@@ -2,6 +2,8 @@ package simforest
 
 import (
 	"math/rand"
+	"strings"
+	"fmt"
 )
 
 type Animal struct {
@@ -9,10 +11,22 @@ type Animal struct {
 	gender Gender
 	pos Position
 	age int
+	tickLastMated int
 }
 
-func (a *Animal) Move() {
-	randomStep(&a.pos, a.environment)
+func (a *Animal) Move(population []Creature) {
+	steps := []int{-1, 0, 1}
+	direction := Position{
+		steps[rand.Intn(len(steps))],
+		steps[rand.Intn(len(steps))],
+	}
+
+	newPosition := a.pos.Add(direction)
+	canMoveThere := newPosition.IsWithinEnvironment(a.environment) && !newPosition.IsTaken(population)
+
+	if canMoveThere {
+		a.pos= newPosition
+	}
 }
 
 func (a Animal) Gender() Gender {
@@ -31,18 +45,29 @@ func (a Animal) Env() *Environment {
 	return a.environment
 }
 
-func (a Animal) IncreaseAge() {
+func (a *Animal) IncreaseAge() {
 	a.age += 1
 }
 
-func randomStep(p *Position, e *Environment) {
-	steps := []int{-1, 0, 1}
-	direction := Position{
-		steps[rand.Intn(len(steps))],
-		steps[rand.Intn(len(steps))],
+func (a Animal) CanStartMating(ticksBetweenMating int) bool {
+	if a.Env().tickCount > a.tickLastMated + ticksBetweenMating {
+		return true
+	}
+	return false
+}
+
+func (a Animal) Render(marker string) string {
+	var colorCode string
+
+	if a.Gender() == Female {
+		colorCode = ErrorColor
+	} else {
+		colorCode = InfoColor
 	}
 
-	if newPosition := p.Add(direction); newPosition.IsWithinEnvironment(e) {
-		*p = p.Add(direction)
+	if a.Age() < 30 {
+		return fmt.Sprintf(colorCode, marker)
+	} else {
+		return fmt.Sprintf(colorCode, strings.ToUpper(marker))
 	}
 }
