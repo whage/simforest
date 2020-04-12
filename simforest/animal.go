@@ -23,18 +23,15 @@ func (a Animal) Age() int {
 	return a.age
 }
 
-func (a *Animal) TryToMate(other Animal) Creature {
-	if (a.gender != other.gender) && other.age > 30 && a.age > 30 {
-		//return CreateBunny(Position{other.pos.X, other.pos.Y}, other.environment)
-	}
-	return nil
-}
-
-func (a *Animal) Pos() Position {
+func (a Animal) Pos() Position {
 	return a.pos
 }
 
-func (a *Animal) IncreaseAge() {
+func (a Animal) Env() *Environment {
+	return a.environment
+}
+
+func (a Animal) IncreaseAge() {
 	a.age += 1
 }
 

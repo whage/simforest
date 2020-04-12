@@ -2,6 +2,7 @@ package simforest
 
 import (
 	"math/rand"
+	_ "fmt"
 )
 
 const (
@@ -28,23 +29,14 @@ func CreateEnvironment(width, height int) *Environment {
 	}
 }
 
-type Mover interface {
-	Pos() Position
-	Move()
-}
-
-type Mater interface {
-	TryToMate(other Animal) Creature
-}
-
-type Ager interface {
-	IncreaseAge()
-}
-
 type Creature interface {
-	Mover
-	Mater
-	Ager
+	Pos() Position
+	Env() *Environment
+	Move()
+	Age() int
+	IncreaseAge()
+	Gender() Gender
+	Mate(Creature) Creature
 }
 
 type Gender int
@@ -54,66 +46,44 @@ const (
 	Female
 )
 
-func CreateBunny(p Position, e *Environment) *Bunny {
-	return &Bunny{
-		Animal{
-			e,
-			Gender(rand.Intn(2)),
-			p,
-			0,
-		},
-	}
-}
-
-func CreateFox(p Position, e *Environment) *Fox {
-	return &Fox{
-		Animal{
-			e,
-			Gender(rand.Intn(2)),
-			p,
-			0,
-		},
-	}
-}
-/*
-func (p []Creature) FilterBunnies() []Bunny {
-	var results []Bunny
-	for i, _ := range p {
-		v, ok := p[i].(*Bunny)
-		if ok {
-			results = append(results, *v)
-		}
-	}
-	return results
-}
-*/
 func InitPopulation(e *Environment) []Creature {
 	population := make([]Creature, 0)
 
 	for i := 0; i < foxCount; i++ {
-		population = append(population, CreateFox(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
+		population = append(population, NewFox(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
 	}
 
 	for i := 0; i < bunnyCount; i++ {
-		population = append(population, CreateBunny(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
+		population = append(population, NewBunny(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
 	}
 
 	return population
+}
+
+func TryToMate(c Creature, others []Creature) Creature {
+	for _, o := range others {
+		if c == o { continue } // skip self
+		if c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
+			return c.Mate(o)
+		}
+	}
+	return nil
 }
 
 func Step(population []Creature) []Creature {
 	var newPopulation []Creature
 
 	for i, _ := range population {
-		// pass rest of the population to Move() method
-		//population[i].Move(append(population[:i], population[i+1:]...))
 		population[i].Move()
-		//population[i].TryToMate()
+		// add potential newborn to population
+		newBorn := TryToMate(population[i], population)
+		if newBorn != nil {
+			newPopulation = append(newPopulation, newBorn)
+		}
 		population[i].IncreaseAge()
-
 		// Carry current object over to population of next round
 		newPopulation = append(newPopulation, population[i])
 	}
-
+	//fmt.Println(len(newPopulation))
 	return newPopulation
 }
