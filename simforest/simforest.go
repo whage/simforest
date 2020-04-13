@@ -43,12 +43,13 @@ func CreateEnvironment(width, height int) *Environment {
 type Creature interface {
 	Pos() Position
 	Env() *Environment
+	Act([]Creature) []Creature
 	Move([]Creature)
 	Age() int
 	IncreaseAge()
 	Gender() Gender
-	Mate(Creature) Creature
-	CanStartMating() bool
+	Mate(Creature) []Creature
+	CanStartMating(int) bool
 	Render() string
 }
 
@@ -73,7 +74,7 @@ func InitPopulation(e *Environment) []Creature {
 	return population
 }
 
-func TryToMate(c Creature, others []Creature) Creature {
+func TryToMate(c Creature, others []Creature) []Creature {
 	for _, o := range others {
 		if c == o { continue } // skip self
 		if c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
@@ -84,23 +85,20 @@ func TryToMate(c Creature, others []Creature) Creature {
 }
 
 func Tick(population []Creature, env *Environment) []Creature {
-	var newPopulation []Creature
+	var populationForNextTick []Creature
 
 	for i, _ := range population {
-		population[i].Move(population)
-		// add potential newborn to population
-		if population[i].CanStartMating() {
-			offSpring := TryToMate(population[i], population)
-			if offSpring != nil {
-				newPopulation = append(newPopulation, offSpring)
-			}
-		}
+		newCreatures := population[i].Act(population)
 		population[i].IncreaseAge()
+
+		// add any new objects to population
+		populationForNextTick = append(populationForNextTick, newCreatures...)
+
 		// Carry current object over to population of next round
-		newPopulation = append(newPopulation, population[i])
+		populationForNextTick = append(populationForNextTick, population[i])
 	}
 
 	env.tickCount += 1
 
-	return newPopulation
+	return populationForNextTick
 }

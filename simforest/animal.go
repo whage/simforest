@@ -49,7 +49,7 @@ func (a *Animal) IncreaseAge() {
 	a.age += 1
 }
 
-func (a Animal) CanStartMating(ticksBetweenMating int) bool {
+func (a *Animal) CanStartMating(ticksBetweenMating int) bool {
 	if a.Env().tickCount > a.tickLastMated + ticksBetweenMating {
 		return true
 	}
@@ -70,4 +70,20 @@ func (a Animal) Render(marker string) string {
 	} else {
 		return fmt.Sprintf(colorCode, strings.ToUpper(marker))
 	}
+}
+
+func (a *Animal) CommonAct(population []Creature, ticksBetweenMating int, currentCreature Creature) []Creature {
+	a.Move(population)
+
+	var newCreatures []Creature
+
+	// add potential newborn to population
+	if a.CanStartMating(ticksBetweenMating) {
+		offSpring := TryToMate(currentCreature, population)
+		if offSpring != nil {
+			newCreatures = offSpring
+		}
+	}
+
+	return newCreatures
 }

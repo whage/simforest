@@ -10,17 +10,13 @@ type Fox struct {
 	Animal
 }
 
-func (f *Fox) Mate(other Creature) Creature {
+func (f *Fox) Mate(other Creature) []Creature {
 	_, ok := other.(*Fox)
 	if ok {
 		f.tickLastMated = f.Env().tickCount
-		return NewFox(f.Pos(), f.Env())
+		return []Creature{NewFox(f.Pos(), f.Env())}
 	}
 	return nil
-}
-
-func (b *Fox) CanStartMating() bool {
-	return b.Animal.CanStartMating(FoxTicksBetweenMating)
 }
 
 func NewFox(p Position, e *Environment) *Fox {
@@ -37,4 +33,19 @@ func NewFox(p Position, e *Environment) *Fox {
 
 func (f Fox) Render() string {
 	return f.Animal.Render("f")
+}
+
+func (f *Fox) Act(population []Creature) []Creature {
+	offspring := f.Animal.CommonAct(population, FoxTicksBetweenMating, f)
+
+	// eat a nearby Bunny!
+	for _, c := range population {
+		b, isBunny := c.(*Bunny)
+		if isBunny && b.Pos().IsNearby(f.Pos()) {
+			// eat that bunny!
+			break
+		}
+	}
+
+	return offspring
 }
