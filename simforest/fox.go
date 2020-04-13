@@ -27,6 +27,7 @@ func NewFox(p Position, e *Environment) *Fox {
 			p,
 			0,
 			e.tickCount,
+			true,
 		},
 	}
 }
@@ -42,7 +43,7 @@ func (f *Fox) Act(population []Creature) []Creature {
 	for _, c := range population {
 		b, isBunny := c.(*Bunny)
 		if isBunny && b.Pos().IsNearby(f.Pos()) {
-			// eat that bunny!
+			b.Die()
 			break
 		}
 	}

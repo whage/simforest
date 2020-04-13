@@ -14,7 +14,7 @@ const (
 )
 
 const (
-	foxCount = 15
+	foxCount = 40
 	bunnyCount = 25
 )
 
@@ -51,6 +51,8 @@ type Creature interface {
 	Mate(Creature) []Creature
 	CanStartMating(int) bool
 	Render() string
+	Die()
+	IsAlive() bool
 }
 
 type Gender int
@@ -77,7 +79,7 @@ func InitPopulation(e *Environment) []Creature {
 func TryToMate(c Creature, others []Creature) []Creature {
 	for _, o := range others {
 		if c == o { continue } // skip self
-		if c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
+		if o.IsAlive() && c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
 			return c.Mate(o)
 		}
 	}
@@ -88,6 +90,9 @@ func Tick(population []Creature, env *Environment) []Creature {
 	var populationForNextTick []Creature
 
 	for i, _ := range population {
+		if !population[i].IsAlive() {
+			continue
+		}
 		newCreatures := population[i].Act(population)
 		population[i].IncreaseAge()
 
@@ -100,5 +105,15 @@ func Tick(population []Creature, env *Environment) []Creature {
 
 	env.tickCount += 1
 
-	return populationForNextTick
+	return filterOutDead(populationForNextTick)
+}
+
+func filterOutDead(population []Creature) []Creature {
+	results := make([]Creature, 0, len(population))
+	for _, c := range population {
+		if c.IsAlive() {
+			results = append(results, c)
+		}
+	}
+	return results
 }

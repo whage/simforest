@@ -27,6 +27,7 @@ func NewBunny(p Position, e *Environment) *Bunny {
 			p,
 			0,
 			e.tickCount,
+			true,
 		},
 	}
 }

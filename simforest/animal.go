@@ -12,6 +12,7 @@ type Animal struct {
 	pos Position
 	age int
 	tickLastMated int
+	isAlive bool
 }
 
 func (a *Animal) Move(population []Creature) {
@@ -56,8 +57,20 @@ func (a *Animal) CanStartMating(ticksBetweenMating int) bool {
 	return false
 }
 
+func (a *Animal) Die() {
+	a.isAlive = false
+}
+
+func (a *Animal) IsAlive() bool {
+	return a.isAlive
+}
+
 func (a Animal) Render(marker string) string {
 	var colorCode string
+
+	if !a.IsAlive() {
+		return " "
+	}
 
 	if a.Gender() == Female {
 		colorCode = ErrorColor

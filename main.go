@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	gameLoopInterval = 200
+	gameLoopInterval = 50
 )
 
 func main() {
