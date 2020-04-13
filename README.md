@@ -1,5 +1,7 @@
 # Simforest: an ecological simulation
 
+This is how I'm learning to program in Go.
+
 ## TODO
 - one tile can be occupied by one ctreature only
 - pure random movement is stupid. Do something much more realistic

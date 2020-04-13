@@ -28,23 +28,30 @@ func NewFox(p Position, e *Environment) *Fox {
 			0,
 			e.tickCount,
 			true,
+			e.tickCount,
 		},
 	}
 }
 
 func (f Fox) Render() string {
-	return f.Animal.Render("f")
+	return "f"
+}
+
+func (f Fox) IsAdult() bool {
+	return f.Age() > 30
 }
 
 func (f *Fox) Act(population []Creature) []Creature {
 	offspring := f.Animal.CommonAct(population, FoxTicksBetweenMating, f)
 
 	// eat a nearby Bunny!
-	for _, c := range population {
-		b, isBunny := c.(*Bunny)
-		if isBunny && b.Pos().IsNearby(f.Pos()) {
-			b.Die()
-			break
+	if f.IsAdult() {
+		for _, c := range population {
+			b, isBunny := c.(*Bunny)
+			if isBunny && b.Pos().IsNearby(f.Pos()) {
+				b.Die()
+				break
+			}
 		}
 	}
 

@@ -28,12 +28,17 @@ func NewBunny(p Position, e *Environment) *Bunny {
 			0,
 			e.tickCount,
 			true,
+			e.tickCount,
 		},
 	}
 }
 
 func (b Bunny) Render() string {
-	return b.Animal.Render("b")
+	return "b"
+}
+
+func (b Bunny) IsAdult() bool {
+	return b.Age() > 20
 }
 
 func (b *Bunny) Act(population []Creature) []Creature {

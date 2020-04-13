@@ -2,8 +2,6 @@ package simforest
 
 import (
 	"math/rand"
-	"strings"
-	"fmt"
 )
 
 type Animal struct {
@@ -13,6 +11,7 @@ type Animal struct {
 	age int
 	tickLastMated int
 	isAlive bool
+	tickOfBirth int
 }
 
 func (a *Animal) Move(population []Creature) {
@@ -34,8 +33,8 @@ func (a Animal) Gender() Gender {
 	return a.gender
 }
 
-func (a Animal) Age() int {
-	return a.age
+func (a *Animal) Age() int {
+	return a.environment.tickCount - a.tickOfBirth
 }
 
 func (a Animal) Pos() Position {
@@ -44,10 +43,6 @@ func (a Animal) Pos() Position {
 
 func (a Animal) Env() *Environment {
 	return a.environment
-}
-
-func (a *Animal) IncreaseAge() {
-	a.age += 1
 }
 
 func (a *Animal) CanStartMating(ticksBetweenMating int) bool {
@@ -63,26 +58,6 @@ func (a *Animal) Die() {
 
 func (a *Animal) IsAlive() bool {
 	return a.isAlive
-}
-
-func (a Animal) Render(marker string) string {
-	var colorCode string
-
-	if !a.IsAlive() {
-		return " "
-	}
-
-	if a.Gender() == Female {
-		colorCode = ErrorColor
-	} else {
-		colorCode = InfoColor
-	}
-
-	if a.Age() < 30 {
-		return fmt.Sprintf(colorCode, marker)
-	} else {
-		return fmt.Sprintf(colorCode, strings.ToUpper(marker))
-	}
 }
 
 func (a *Animal) CommonAct(population []Creature, ticksBetweenMating int, currentCreature Creature) []Creature {

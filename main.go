@@ -16,6 +16,14 @@ const (
 	gameLoopInterval = 50
 )
 
+const (
+	InfoColor    = "\033[1;34m%s\033[0m"
+	NoticeColor  = "\033[1;36m%s\033[0m"
+	WarningColor = "\033[1;33m%s\033[0m"
+	ErrorColor   = "\033[1;31m%s\033[0m"
+	DebugColor   = "\033[0;36m%s\033[0m"
+)
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
@@ -54,10 +62,31 @@ func drawWorld(population []simforest.Creature, e *simforest.Environment) {
 	}
 }
 
+func GetMarker(c simforest.Creature) string {
+	var colorCode string
+	sign := c.Render()
+
+	if !c.IsAlive() {
+		return " "
+	}
+
+	if c.Gender() == simforest.Female {
+		colorCode = ErrorColor
+	} else {
+		colorCode = InfoColor
+	}
+
+	if c.IsAdult() {
+		return fmt.Sprintf(colorCode, strings.ToUpper(sign))
+	} else {
+		return fmt.Sprintf(colorCode, sign)
+	}
+}
+
 func getMarker(x, y int, population []simforest.Creature) string {
 	for _, c := range population {
 		if c.Pos().X == x && c.Pos().Y == y {
-			return c.Render()
+			return GetMarker(c)
 		}
 	}
 	return " "
