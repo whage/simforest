@@ -12,20 +12,27 @@ type Animal struct {
 	tickLastMated int
 	isAlive bool
 	tickOfBirth int
+	direction *Position
 }
 
 func (a *Animal) Move(population []Entity) {
 	steps := []int{-1, 0, 1}
-	direction := Position{
+	newDirection := &Position{
 		steps[rand.Intn(len(steps))],
 		steps[rand.Intn(len(steps))],
 	}
 
-	newPosition := a.pos.Add(direction)
+	if a.direction == nil {
+		a.direction = newDirection
+	}
+
+	newPosition := a.pos.Add(*(a.direction))
 	canMoveThere := newPosition.IsWithinEnvironment(a.environment) && !newPosition.IsTaken(population)
 
 	if canMoveThere {
 		a.pos= newPosition
+	} else {
+		a.direction = nil
 	}
 }
 

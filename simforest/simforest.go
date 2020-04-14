@@ -7,13 +7,15 @@ import (
 
 const (
 	foxCount = 40
-	bunnyCount = 25
-	carrotCount = 15
+	bunnyCount = 80
+	carrotCount = 100
 )
 
 const (
 	LightBrown = "\033[38;5;101m%s\033[0m"
 	LightBlue  = "\033[1;34m%s\033[0m"
+	Salmon = "\033[38;5;216m%s\033[0m"
+	LightPink = "\033[38;5;182m%s\033[0m"
 	Teal = "\033[1;36m%s\033[0m"
 	Yellow = "\033[1;33m%s\033[0m"
 	Red = "\033[1;31m%s\033[0m"
@@ -53,7 +55,7 @@ type Entity interface {
 	Act([]Entity) []Entity
 	Move([]Entity)
 	Gender() Gender
-	Mate(Entity) []Entity
+	Mate(Entity, []Entity) []Entity
 	Render() Marker
 	IsAlive() bool
 	IsAdult() bool
@@ -88,7 +90,7 @@ func TryToMate(c Entity, others []Entity) []Entity {
 	for _, o := range others {
 		if c == o { continue } // skip self
 		if o.IsAlive() && c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
-			return c.Mate(o)
+			return c.Mate(o, others)
 		}
 	}
 	return nil

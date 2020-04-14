@@ -38,6 +38,18 @@ func (p *Position) IsTaken(population []Entity) bool {
 	return false
 }
 
+func (p Position) FindFreeNeighborTile(population []Entity, e *Environment) *Position {
+	for x := -1; x <= 1; x++ {
+		for y := -1; y <= 1; y++ {
+			current := Position{p.X+x,p.Y+y}
+			if current.IsWithinEnvironment(e) && !current.IsTaken(population) {
+				return &current
+			}
+		}
+	}
+	return nil
+}
+
 func (p Position) IsNearby(o Position) bool {
 	xWithin1 := math.Abs(float64(o.X-p.X)) <= 1
 	yWithin1 := math.Abs(float64(o.Y-p.Y)) <= 1

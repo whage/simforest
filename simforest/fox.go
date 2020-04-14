@@ -10,13 +10,15 @@ type Fox struct {
 	Animal
 }
 
-func (f *Fox) Mate(other Entity) []Entity {
+func (f *Fox) Mate(other Entity, population []Entity) []Entity {
 	_, ok := other.(*Fox)
 	if ok {
-		f.tickLastMated = f.Env().tickCount
-		return []Entity{NewFox(f.Pos(), f.Env())}
+		if offSpringPosition := f.Pos().FindFreeNeighborTile(population, f.Env()); offSpringPosition != nil {
+			f.tickLastMated = f.Env().tickCount
+			return []Entity{NewFox(*offSpringPosition, f.Env())}
+		}
 	}
-	return nil
+	return []Entity{}
 }
 
 func NewFox(p Position, e *Environment) *Fox {
@@ -29,13 +31,22 @@ func NewFox(p Position, e *Environment) *Fox {
 			e.tickCount,
 			true,
 			e.tickCount,
+			nil,
 		},
 	}
 }
 
 func (f Fox) Render() Marker {
+	var color string
+
+	if f.Gender() == Female {
+		color = LightPink
+	} else {
+		color = LightBrown
+	}
+
 	return Marker{
-		LightBrown,
+		color,
 		"f",
 	}
 }

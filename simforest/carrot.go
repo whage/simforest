@@ -20,7 +20,7 @@ func (c *Carrot) IsAlive() bool {
 	return true // And live forever
 }
 
-func (c *Carrot) Mate(e Entity) []Entity {
+func (c *Carrot) Mate(e Entity, population []Entity) []Entity {
 	return []Entity{}
 }
 

@@ -10,11 +10,13 @@ type Bunny struct {
 	Animal
 }
 
-func (b *Bunny) Mate(other Entity) []Entity {
+func (b *Bunny) Mate(other Entity, population []Entity) []Entity {
 	_, ok := other.(*Bunny)
 	if ok {
-		b.tickLastMated = b.Env().tickCount
-		return []Entity{NewBunny(b.Pos(), b.Env())}
+		if offSpringPosition := b.Pos().FindFreeNeighborTile(population, b.Env()); offSpringPosition != nil {
+			b.tickLastMated = b.Env().tickCount
+			return []Entity{NewBunny(*offSpringPosition, b.Env())}
+		}
 	}
 	return []Entity{}
 }
@@ -29,13 +31,22 @@ func NewBunny(p Position, e *Environment) *Bunny {
 			e.tickCount,
 			true,
 			e.tickCount,
+			nil,
 		},
 	}
 }
 
 func (b Bunny) Render() Marker {
+	var color string
+
+	if b.Gender() == Female {
+		color = Salmon
+	} else {
+		color = Cyan
+	}
+
 	return Marker{
-		Cyan,
+		color,
 		"b",
 	}
 }

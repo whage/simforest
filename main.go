@@ -52,6 +52,7 @@ func drawWorld(population []simforest.Entity, e *simforest.Environment) {
 			fmt.Print(getMarker(x, y, population))
 		}
 	}
+	//fmt.Println(len(population))
 }
 
 func GetMarker(c simforest.Entity) string {

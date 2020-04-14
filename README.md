@@ -1,11 +1,11 @@
 # Simforest: an ecological simulation
 
 This is how I'm learning to program in Go.
+Inspired by https://www.youtube.com/watch?v=r_It_X7v-1E. Go watch his videos!
 
 ## TODO
-- one tile can be occupied by one ctreature only
-- pure random movement is stupid. Do something much more realistic
-- use some builtin vector type instead of custom `Position`
+- implement needs
+- make movement based on needs
 - learn how to do "inheritance" in go
     - how to share code between related objects (as in parent class's method in classical OOP)
     - https://stackoverflow.com/questions/21251242/is-it-possible-to-call-overridden-method-from-parent-struct-in-golang
@@ -20,5 +20,4 @@ This is how I'm learning to program in Go.
 - implement an environment that is larger than the viewport (arbitrary world size)
 	- make it possible to move the view
 - procedurally generated terrain
-	- 3D eventually?
-- 
+- get rid of the inefficient searches (everything related to positions)
