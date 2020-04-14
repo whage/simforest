@@ -14,7 +14,7 @@ type Animal struct {
 	tickOfBirth int
 }
 
-func (a *Animal) Move(population []Creature) {
+func (a *Animal) Move(population []Entity) {
 	steps := []int{-1, 0, 1}
 	direction := Position{
 		steps[rand.Intn(len(steps))],
@@ -60,18 +60,18 @@ func (a *Animal) IsAlive() bool {
 	return a.isAlive
 }
 
-func (a *Animal) CommonAct(population []Creature, ticksBetweenMating int, currentCreature Creature) []Creature {
+func (a *Animal) CommonAct(population []Entity, ticksBetweenMating int, currentEntity Entity) []Entity {
 	a.Move(population)
 
-	var newCreatures []Creature
+	var newEntities []Entity
 
 	// add potential newborn to population
 	if a.CanStartMating(ticksBetweenMating) {
-		offSpring := TryToMate(currentCreature, population)
+		offSpring := TryToMate(currentEntity, population)
 		if offSpring != nil {
-			newCreatures = offSpring
+			newEntities = offSpring
 		}
 	}
 
-	return newCreatures
+	return newEntities
 }

@@ -10,13 +10,13 @@ type Bunny struct {
 	Animal
 }
 
-func (b *Bunny) Mate(other Creature) []Creature {
+func (b *Bunny) Mate(other Entity) []Entity {
 	_, ok := other.(*Bunny)
 	if ok {
 		b.tickLastMated = b.Env().tickCount
-		return []Creature{NewBunny(b.Pos(), b.Env())}
+		return []Entity{NewBunny(b.Pos(), b.Env())}
 	}
-	return []Creature{}
+	return []Entity{}
 }
 
 func NewBunny(p Position, e *Environment) *Bunny {
@@ -33,14 +33,17 @@ func NewBunny(p Position, e *Environment) *Bunny {
 	}
 }
 
-func (b Bunny) Render() string {
-	return "b"
+func (b Bunny) Render() Marker {
+	return Marker{
+		Cyan,
+		"b",
+	}
 }
 
 func (b Bunny) IsAdult() bool {
 	return b.Age() > 20
 }
 
-func (b *Bunny) Act(population []Creature) []Creature {
+func (b *Bunny) Act(population []Entity) []Entity {
 	return b.Animal.CommonAct(population, BunnyTicksBetweenMating, b)
 }

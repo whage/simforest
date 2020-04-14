@@ -10,11 +10,11 @@ type Fox struct {
 	Animal
 }
 
-func (f *Fox) Mate(other Creature) []Creature {
+func (f *Fox) Mate(other Entity) []Entity {
 	_, ok := other.(*Fox)
 	if ok {
 		f.tickLastMated = f.Env().tickCount
-		return []Creature{NewFox(f.Pos(), f.Env())}
+		return []Entity{NewFox(f.Pos(), f.Env())}
 	}
 	return nil
 }
@@ -33,15 +33,18 @@ func NewFox(p Position, e *Environment) *Fox {
 	}
 }
 
-func (f Fox) Render() string {
-	return "f"
+func (f Fox) Render() Marker {
+	return Marker{
+		LightBrown,
+		"f",
+	}
 }
 
 func (f Fox) IsAdult() bool {
 	return f.Age() > 30
 }
 
-func (f *Fox) Act(population []Creature) []Creature {
+func (f *Fox) Act(population []Entity) []Entity {
 	offspring := f.Animal.CommonAct(population, FoxTicksBetweenMating, f)
 
 	// eat a nearby Bunny!

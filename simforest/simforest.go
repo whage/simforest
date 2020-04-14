@@ -8,6 +8,17 @@ import (
 const (
 	foxCount = 40
 	bunnyCount = 25
+	carrotCount = 15
+)
+
+const (
+	LightBrown = "\033[38;5;101m%s\033[0m"
+	LightBlue  = "\033[1;34m%s\033[0m"
+	Teal = "\033[1;36m%s\033[0m"
+	Yellow = "\033[1;33m%s\033[0m"
+	Red = "\033[1;31m%s\033[0m"
+	Cyan = "\033[0;36m%s\033[0m"
+	Orange = "\033[38;5;214m%s\033[0m"
 )
 
 type Environment struct {
@@ -32,17 +43,18 @@ func CreateEnvironment(width, height int) *Environment {
 	}
 }
 
-type Creature interface {
+type Marker struct {
+	Color string
+	Character string
+}
+
+type Entity interface {
 	Pos() Position
-	Env() *Environment
-	Act([]Creature) []Creature
-	Move([]Creature)
-	Age() int
+	Act([]Entity) []Entity
+	Move([]Entity)
 	Gender() Gender
-	Mate(Creature) []Creature
-	CanStartMating(int) bool
-	Render() string
-	Die()
+	Mate(Entity) []Entity
+	Render() Marker
 	IsAlive() bool
 	IsAdult() bool
 }
@@ -54,8 +66,8 @@ const (
 	Female
 )
 
-func InitPopulation(e *Environment) []Creature {
-	population := make([]Creature, 0)
+func InitPopulation(e *Environment) []Entity {
+	population := make([]Entity, 0)
 
 	for i := 0; i < foxCount; i++ {
 		population = append(population, NewFox(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
@@ -65,10 +77,14 @@ func InitPopulation(e *Environment) []Creature {
 		population = append(population, NewBunny(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
 	}
 
+	for i := 0; i < carrotCount; i++ {
+		population = append(population, &Carrot{Position{rand.Intn(e.width), rand.Intn(e.height)}})
+	}
+
 	return population
 }
 
-func TryToMate(c Creature, others []Creature) []Creature {
+func TryToMate(c Entity, others []Entity) []Entity {
 	for _, o := range others {
 		if c == o { continue } // skip self
 		if o.IsAlive() && c.Gender() != o.Gender() && c.Pos().IsNearby(o.Pos()) {
@@ -78,17 +94,17 @@ func TryToMate(c Creature, others []Creature) []Creature {
 	return nil
 }
 
-func Tick(population []Creature, env *Environment) []Creature {
-	var populationForNextTick []Creature
+func Tick(population []Entity, env *Environment) []Entity {
+	var populationForNextTick []Entity
 
 	for i, _ := range population {
 		if !population[i].IsAlive() {
 			continue
 		}
-		newCreatures := population[i].Act(population)
+		newEntities := population[i].Act(population)
 
 		// add any new objects to population
-		populationForNextTick = append(populationForNextTick, newCreatures...)
+		populationForNextTick = append(populationForNextTick, newEntities...)
 
 		// Carry current object over to population of next round
 		populationForNextTick = append(populationForNextTick, population[i])
@@ -99,8 +115,8 @@ func Tick(population []Creature, env *Environment) []Creature {
 	return filterOutDead(populationForNextTick)
 }
 
-func filterOutDead(population []Creature) []Creature {
-	results := make([]Creature, 0, len(population))
+func filterOutDead(population []Entity) []Entity {
+	results := make([]Entity, 0, len(population))
 	for _, c := range population {
 		if c.IsAlive() {
 			results = append(results, c)

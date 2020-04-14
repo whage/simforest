@@ -29,7 +29,7 @@ func (p *Position) IsWithinEnvironment(e *Environment) bool {
 	return p.X >= 0 && p.X < e.width && p.Y >= 0 && p.Y < e.height
 }
 
-func (p *Position) IsTaken(population []Creature) bool {
+func (p *Position) IsTaken(population []Entity) bool {
 	for _, c := range population {
 		if c.Pos() == *p {
 			return true

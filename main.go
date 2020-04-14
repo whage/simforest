@@ -16,14 +16,6 @@ const (
 	gameLoopInterval = 50
 )
 
-const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	NoticeColor  = "\033[1;36m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	DebugColor   = "\033[0;36m%s\033[0m"
-)
-
 func main() {
 	rand.Seed(time.Now().UnixNano())
 
@@ -54,7 +46,7 @@ func NewEnvironment() *simforest.Environment {
 	return simforest.CreateEnvironment(w, h)
 }
 
-func drawWorld(population []simforest.Creature, e *simforest.Environment) {
+func drawWorld(population []simforest.Entity, e *simforest.Environment) {
 	for y := 0; y < e.Height(); y++ {
 		for x := 0; x < e.Width(); x++ {
 			fmt.Print(getMarker(x, y, population))
@@ -62,28 +54,21 @@ func drawWorld(population []simforest.Creature, e *simforest.Environment) {
 	}
 }
 
-func GetMarker(c simforest.Creature) string {
-	var colorCode string
-	sign := c.Render()
+func GetMarker(c simforest.Entity) string {
+	marker := c.Render()
 
 	if !c.IsAlive() {
 		return " "
 	}
 
-	if c.Gender() == simforest.Female {
-		colorCode = ErrorColor
-	} else {
-		colorCode = InfoColor
-	}
-
 	if c.IsAdult() {
-		return fmt.Sprintf(colorCode, strings.ToUpper(sign))
+		return fmt.Sprintf(marker.Color, strings.ToUpper(marker.Character))
 	} else {
-		return fmt.Sprintf(colorCode, sign)
+		return fmt.Sprintf(marker.Color, marker.Character)
 	}
 }
 
-func getMarker(x, y int, population []simforest.Creature) string {
+func getMarker(x, y int, population []simforest.Entity) string {
 	for _, c := range population {
 		if c.Pos().X == x && c.Pos().Y == y {
 			return GetMarker(c)
