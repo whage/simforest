@@ -84,11 +84,11 @@ func InitPopulation(e *Environment) []Entity {
 	}
 
 	for i := 0; i < carrotCount; i++ {
-		population = append(population, &Carrot{Position{rand.Intn(e.width), rand.Intn(e.height)}})
+		population = append(population, &Carrot{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}}})
 	}
 
 	for i := 0; i < treeCount; i++ {
-		population = append(population, &Tree{Position{rand.Intn(e.width), rand.Intn(e.height)}})
+		population = append(population, &Tree{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}}})
 	}	
 
 	return population
