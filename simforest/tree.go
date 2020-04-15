@@ -36,3 +36,10 @@ func (t *Tree) Render() Marker {
 		"T",
 	}
 }
+
+func (t *Tree) IsAtEndOfLife() bool {
+	return false
+}
+
+func (t *Tree) Die() {
+}

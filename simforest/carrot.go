@@ -36,3 +36,11 @@ func (c *Carrot) Render() Marker {
 		"c",
 	}
 }
+
+func (c *Carrot) IsAtEndOfLife() bool {
+	return false
+}
+
+func (c *Carrot) Die() {
+	
+}

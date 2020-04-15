@@ -58,3 +58,7 @@ func (b Bunny) IsAdult() bool {
 func (b *Bunny) Act(population []Entity) []Entity {
 	return b.Animal.CommonAct(population, BunnyTicksBetweenMating, b)
 }
+
+func (b *Bunny) IsAtEndOfLife() bool {
+	return b.Age() > 100
+}

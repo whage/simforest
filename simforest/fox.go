@@ -71,3 +71,7 @@ func (f *Fox) Act(population []Entity) []Entity {
 
 	return offspring
 }
+
+func (f *Fox) IsAtEndOfLife() bool {
+	return f.Age() > 200
+}

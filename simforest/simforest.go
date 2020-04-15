@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	foxCount = 30
+	foxCount = 20
 	bunnyCount = 80
 	carrotCount = 30
 	treeCount = 250
@@ -61,6 +61,8 @@ type Entity interface {
 	Render() Marker
 	IsAlive() bool
 	IsAdult() bool
+	IsAtEndOfLife() bool
+	Die()
 }
 
 type Gender int
@@ -109,6 +111,11 @@ func Tick(population []Entity, env *Environment) []Entity {
 		if !population[i].IsAlive() {
 			continue
 		}
+
+		if population[i].IsAtEndOfLife() {
+			population[i].Die()
+		}
+
 		newEntities := population[i].Act(population)
 
 		// add any new objects to population
