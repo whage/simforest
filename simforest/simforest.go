@@ -6,13 +6,15 @@ import (
 )
 
 const (
-	foxCount = 40
+	foxCount = 30
 	bunnyCount = 80
-	carrotCount = 100
+	carrotCount = 30
+	treeCount = 250
 )
 
 const (
 	LightBrown = "\033[38;5;101m%s\033[0m"
+	DarkGreen = "\033[38;5;22m%s\033[0m"
 	LightBlue  = "\033[1;34m%s\033[0m"
 	Salmon = "\033[38;5;216m%s\033[0m"
 	LightPink = "\033[38;5;182m%s\033[0m"
@@ -82,6 +84,10 @@ func InitPopulation(e *Environment) []Entity {
 	for i := 0; i < carrotCount; i++ {
 		population = append(population, &Carrot{Position{rand.Intn(e.width), rand.Intn(e.height)}})
 	}
+
+	for i := 0; i < treeCount; i++ {
+		population = append(population, &Tree{Position{rand.Intn(e.width), rand.Intn(e.height)}})
+	}	
 
 	return population
 }
