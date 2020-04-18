@@ -30,8 +30,8 @@ func (p *Position) IsWithinEnvironment(e *Environment) bool {
 }
 
 func (p *Position) IsTaken(population []Entity) bool {
-	for _, c := range population {
-		if c.Pos() == *p {
+	for _, e := range population {
+		if e.Pos() == *p {
 			return true
 		}
 	}

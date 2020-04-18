@@ -5,9 +5,9 @@ import (
 )
 
 type Animal struct {
+	Position
 	environment *Environment
 	gender Gender
-	pos Position
 	age int
 	tickLastMated int
 	isAlive bool
@@ -26,11 +26,11 @@ func (a *Animal) Move(population []Entity) {
 		a.direction = newDirection
 	}
 
-	newPosition := a.pos.Add(*(a.direction))
+	newPosition := a.Position.Add(*(a.direction))
 	canMoveThere := newPosition.IsWithinEnvironment(a.environment) && !newPosition.IsTaken(population)
 
 	if canMoveThere {
-		a.pos= newPosition
+		a.Position= newPosition
 	} else {
 		a.direction = nil
 	}
@@ -44,8 +44,8 @@ func (a *Animal) Age() int {
 	return a.environment.tickCount - a.tickOfBirth
 }
 
-func (a Animal) Pos() Position {
-	return a.pos
+func (a *Animal) Pos() Position {
+	return a.Position
 }
 
 func (a Animal) Env() *Environment {

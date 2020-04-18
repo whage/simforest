@@ -21,3 +21,5 @@ Inspired by https://www.youtube.com/watch?v=r_It_X7v-1E. Go watch his videos!
 	- make it possible to move the view
 - procedurally generated terrain
 - get rid of the inefficient searches (everything related to positions)
+- implement a non-rectangular environment
+	- give space to a HUD
