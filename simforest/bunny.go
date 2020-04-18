@@ -13,9 +13,9 @@ type Bunny struct {
 func (b *Bunny) Mate(other Entity, population []Entity) []Entity {
 	_, ok := other.(*Bunny)
 	if ok {
-		if offSpringPosition := b.FindFreeNeighborTile(population, b.Env()); offSpringPosition != nil {
-			b.tickLastMated = b.Env().tickCount
-			return []Entity{NewBunny(*offSpringPosition, b.Env())}
+		if offSpringPosition := b.FindFreeNeighborTile(population, b.Environment); offSpringPosition != nil {
+			b.tickLastMated = b.Environment.tickCount
+			return []Entity{NewBunny(*offSpringPosition, b.Environment)}
 		}
 	}
 	return []Entity{}
@@ -25,7 +25,7 @@ func NewBunny(p Position, e *Environment) *Bunny {
 	return &Bunny{
 		Animal{
 			Position: p,
-			environment: e,
+			Environment: e,
 			gender: Gender(rand.Intn(2)),
 			age: 0,
 			tickLastMated: e.tickCount,

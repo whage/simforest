@@ -6,7 +6,7 @@ import (
 
 type Animal struct {
 	Position
-	environment *Environment
+	*Environment
 	gender Gender
 	age int
 	tickLastMated int
@@ -27,7 +27,7 @@ func (a *Animal) Move(population []Entity) {
 	}
 
 	newPosition := a.Position.Add(*(a.direction))
-	canMoveThere := newPosition.IsWithinEnvironment(a.environment) && !newPosition.IsTaken(population)
+	canMoveThere := newPosition.IsWithinEnvironment(a.Environment) && !newPosition.IsTaken(population)
 
 	if canMoveThere {
 		a.Position= newPosition
@@ -41,19 +41,15 @@ func (a Animal) Gender() Gender {
 }
 
 func (a *Animal) Age() int {
-	return a.environment.tickCount - a.tickOfBirth
+	return a.Environment.tickCount - a.tickOfBirth
 }
 
 func (a *Animal) Pos() Position {
 	return a.Position
 }
 
-func (a Animal) Env() *Environment {
-	return a.environment
-}
-
 func (a *Animal) CanStartMating(ticksBetweenMating int) bool {
-	if a.Env().tickCount > a.tickLastMated + ticksBetweenMating {
+	if a.Environment.tickCount > a.tickLastMated + ticksBetweenMating {
 		return true
 	}
 	return false
