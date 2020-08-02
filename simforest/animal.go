@@ -30,7 +30,7 @@ func (a *Animal) Move(population []Entity) {
 	canMoveThere := newPosition.IsWithinEnvironment(a.Environment) && !newPosition.IsTaken(population)
 
 	if canMoveThere {
-		a.Position= newPosition
+		a.Position = newPosition
 	} else {
 		a.direction = nil
 	}

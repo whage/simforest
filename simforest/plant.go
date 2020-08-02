@@ -2,6 +2,7 @@ package simforest
 
 type Plant struct {
 	Position
+	isAlive bool
 }
 
 func (p *Plant) Act(population []Entity) []Entity {
@@ -17,7 +18,7 @@ func (p *Plant) IsAdult() bool {
 }
 
 func (p *Plant) IsAlive() bool {
-	return true
+	return p.isAlive
 }
 
 func (p *Plant) Mate(e Entity, population []Entity) []Entity {
@@ -34,4 +35,6 @@ func (p *Plant) IsAtEndOfLife() bool {
 	return false
 }
 
-func (p *Plant) Die() {}
+func (p *Plant) Die() {
+	p.isAlive = false
+}

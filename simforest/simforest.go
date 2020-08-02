@@ -6,10 +6,11 @@ import (
 )
 
 const (
-	foxCount = 20
-	bunnyCount = 80
+	foxCount = 5
+	bunnyCount = 10
 	carrotCount = 30
-	treeCount = 250
+	treeCount = 1500
+	elephantCount = 50
 )
 
 const (
@@ -23,6 +24,8 @@ const (
 	Red = "\033[1;31m%s\033[0m"
 	Cyan = "\033[0;36m%s\033[0m"
 	Orange = "\033[38;5;214m%s\033[0m"
+	MaleElephantColor = "\033[38;5;189m%s\033[0m"
+	FemaleElephantColor = "\033[38;5;206m%s\033[0m"
 )
 
 type Environment struct {
@@ -84,11 +87,15 @@ func InitPopulation(e *Environment) []Entity {
 	}
 
 	for i := 0; i < carrotCount; i++ {
-		population = append(population, &Carrot{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}}})
+		population = append(population, &Carrot{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}, true}})
 	}
 
 	for i := 0; i < treeCount; i++ {
-		population = append(population, &Tree{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}}})
+		population = append(population, &Tree{Plant{Position{rand.Intn(e.width), rand.Intn(e.height)}, true}})
+	}
+
+	for i := 0; i < elephantCount; i++ {
+		population = append(population, NewElephant(Position{rand.Intn(e.width), rand.Intn(e.height)}, e))
 	}	
 
 	return population
